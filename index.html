@@ -26,7 +26,11 @@
 
         .blue{ color: #9cdcfe;}
         .orange{ color: #ce9078;}
+        .green{ color: #b5c078}
+
         .tab{margin-left: 25px;}
+        .tab2{margin-left: 50px;}
+        .tab3{margin-left: 75px;}
         .bigTab{margin-left: 160px;}
     </style>
 </head>
@@ -40,14 +44,14 @@
 </body>
 
 <script>
-    var typing = false;
-    var currArrIndex = 0;
-    var innerHtml = '';
+    let typing = false;
+    let currArrIndex = 0;
+    let innerHtml = '';
 
     const spanId = 'span-container';
     const regExOpenTag = /.*<[\w\s="\/]*$(?<!>)$/g;
     const speedType = 2;
-    const speedDelete = 10;
+    const speedDelete = 1;
     const arrTexts =
     [
         '{*'+
@@ -61,7 +65,26 @@
         '}',
 
         '{*' + 
-        '"@bla bla:" "adadsasdasa"' +
+        '<span class="blue tab">"education"</span>: [*' +
+        '<span class="tab2">{*' + 
+        '<span class="blue tab3">"course"</span>: <span class="orange">"Técnico em informática"</span>,*' +
+        '<span class="blue tab3">"institute"</span>: <span class="orange">"ETEC de Vila formosa"</span>,*' + 
+        '<span class="blue tab3">"startYear"</span>: <span class="green">2013</span>,*' + 
+        '<span class="blue tab3">"finishYear"</span>: <span class="green">2014</span>*' + 
+        '<span class="tab2">},</span>*' + 
+        '<span class="tab2">{*' + 
+        '<span class="blue tab3">"course"</span>: <span class="orange">"Análise e Desenvolvimento de Sistemas"</span>,*' +
+        '<span class="blue tab3">"institute"</span>: <span class="orange">"Faculdade de Tecnologia de São Paulo"</span>,*' + 
+        '<span class="blue tab3">"startYear"</span>: <span class="green">2015</span>,*' + 
+        '<span class="blue tab3">"finishYear"</span>: <span class="green">2018</span>*' + 
+        '<span class="tab2">},</span>*' + 
+        '<span class="tab2">{*' + 
+        '<span class="blue tab3">"course"</span>: <span class="orange">"Scrum Fundamentals"</span>,*' +
+        '<span class="blue tab3">"institute"</span>: <span class="orange">"SCRUMstudy"</span>,*' + 
+        '<span class="blue tab3">"startYear"</span>: <span class="green">2020</span>,*' + 
+        '<span class="blue tab3">"finishYear"</span>: <span class="green">2020</span>*' + 
+        '<span class="tab2">}</span>*' + 
+        '<span class="tab">]</spam>*' + 
         '}'
     ]; 
 
@@ -119,7 +142,7 @@
 
     typeString(arrTexts[currArrIndex], speedType);
 
-    //Scrow - change texts
+    //Scroll - change texts
     var scrollableElement = document.body;
 
     scrollableElement.addEventListener('wheel', checkScrollDirection);
