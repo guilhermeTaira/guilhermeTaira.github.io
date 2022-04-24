@@ -1,0 +1,147 @@
+<html>
+<head>
+    <style>
+        body {
+            font-family: 'Consolas'; 
+            background-color:#1e1e1e;
+            text-align: left;
+            font-size: 20px;
+            line-height: 30px;
+        }
+
+        .container{
+            display: table;
+            height: 100%;
+        }
+
+        .element{
+            display: table-cell;
+            vertical-align: middle;
+        }
+        
+        * { color:#d4d4d4; text-decoration: none;}
+
+        .wrap { border-right: 0.08em solid #fff}
+
+        .blue{ color: #9cdcfe;}
+        .orange{ color: #ce9078;}
+        .tab{margin-left: 25px;}
+        .tab8{margin-left: 200px;}
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="element">
+            <span id="span-container"></span> 
+        </div>       
+    </div>
+</body>
+
+<script>
+    var typing = false;
+    var currArrIndex = 0;
+    var innerHtml = '';
+
+    const spanId = 'span-container';
+    const regExOpenTag = /.*<[\w\s="\/]*$(?<!>)$/g;
+    const speedType = 2;
+    const speedDelete = 10;
+    const arrTexts =
+    [
+        '{*'+
+            '<span class="blue tab">"name"</span>: <span class="orange">"Guilherme Taira"</span>,*' +
+            '<span class="blue tab">"address"</span>: <span class="orange">"Vila Carrão – São Paulo – SP"</span>,*' + 
+            '<span class="blue tab">"email"</span>: <span class="orange">"gui.s.taira@live.com"</span>,*' + 
+            '<span class="blue tab">"phone"</span>: <span class="orange">"(11) 99166-1507"</span>,*' + 
+            '<span class="blue tab">"summary"</span>: <span class="orange">"Tecnólogo em Análise e Desenvolvimento de Sistemas</span>*' +
+            '<span class="orange tab8">e técnico em informática, Desenvolvedor com foco em Back-end</span>*' +  
+            '<span class="orange tab8">apaixonado por tecnologia."</span>*' + 
+        '}',
+
+        '{*' + 
+        '"@bla bla:" "adadsasdasa"' +
+        '}'
+    ]; 
+
+
+    function typeString(message, period){
+        var TxtType = function(message) {
+            this.txt = '';
+            this.tick();
+        };
+    
+        TxtType.prototype.tick = function() {
+            typing = true;
+            this.txt = message.substring(0, this.txt.length + 1);
+            
+            var toHtml = this.txt.replaceAll('*', '<br/>');
+
+            if(toHtml.match(regExOpenTag)){
+                period = 0;
+            }
+            else{           
+                document.getElementById(spanId).innerHTML = '<span class="wrap">'+ toHtml + '</span>';
+                period = speedType;
+            }
+
+            var that = this;
+
+            if (this.txt != message)
+                setTimeout(function() {that.tick();}, period);
+            else
+                typing = false;
+
+        };
+
+        new TxtType(message);
+    }
+
+    function replaceString(newString, periodRemove, periodType){
+        typing = true;
+
+        if(innerHtml === ''){
+            typing = false;
+            typeString(newString, periodType)
+        }
+        else{
+            innerHtml = innerHtml.substring(0, innerHtml.length - 1);
+            if(innerHtml.match(regExOpenTag)){
+                setTimeout(function() {replaceString(newString, periodRemove, periodType);}, 0);
+            }
+            else{
+                document.getElementById(spanId).innerHTML = innerHtml;
+                setTimeout(function() {replaceString(newString, periodRemove, periodType);}, periodRemove);
+            }
+        }
+    }
+
+    typeString(arrTexts[currArrIndex], speedType);
+
+    //Scrow - change texts
+    var scrollableElement = document.body;
+
+    scrollableElement.addEventListener('wheel', checkScrollDirection);
+
+    function checkScrollDirection(event) {
+        if(typing)
+            return;
+        
+        innerHtml = document.getElementById(spanId).innerHTML;
+
+        if (checkScrollDirectionIsUp(event) && currArrIndex > 0)
+            replaceString(arrTexts[--currArrIndex], speedDelete, speedType);
+        else if(!checkScrollDirectionIsUp(event) &&currArrIndex < arrTexts.length -1)
+            replaceString(arrTexts[++currArrIndex], speedDelete, speedType);
+    }
+
+    function checkScrollDirectionIsUp(event) {
+        if (event.wheelDelta) {
+            return event.wheelDelta > 0;
+        }
+        return event.deltaY < 0;
+    }
+</script>
+</html>
+
+
