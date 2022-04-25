@@ -6,8 +6,15 @@
             font-family: 'Consolas'; 
             background-color:#1e1e1e;
             text-align: left;
-            font-size: 20px;
-            line-height: 30px;
+            font-size: 18px;
+            line-height: 24px;
+        }
+
+        @media screen and (max-height: 700px) {
+            body {
+                font-size: 15px;
+                line-height: 18px;
+            }
         }
 
         .container{
@@ -18,6 +25,7 @@
         .element{
             display: table-cell;
             vertical-align: middle;
+            padding-left: 20px;
         }
         
         * { color:#d4d4d4; text-decoration: none;}
@@ -31,6 +39,8 @@
         .tab{margin-left: 25px;}
         .tab2{margin-left: 50px;}
         .tab3{margin-left: 75px;}
+
+        .tab10{margin-left: 250px;}
         .bigTab{margin-left: 160px;}
     </style>
 </head>
@@ -50,8 +60,6 @@
 
     const spanId = 'span-container';
     const regExOpenTag = /.*<[\w\s="\/]*$(?<!>)$/g;
-    const speedType = 2;
-    const speedDelete = 1;
     const arrTexts =
     [
         '{*'+
@@ -85,11 +93,51 @@
         '<span class="blue tab3">"finishYear"</span>: <span class="green">2020</span>*' + 
         '<span class="tab2">}</span>*' + 
         '<span class="tab">]</spam>*' + 
-        '}'
+        '}',
+
+        '{*' + 
+        '<span class="blue tab">"experience"</span>: [*' +
+        '<span class="tab2">{*' + 
+        '<span class="blue tab3">"roles"</span>: [<span class="orange">"Desenvolvedor Back-end"</span>],*' +
+        '<span class="blue tab3">"company"</span>: <span class="orange">"Ticket (Edenred)"</span>,*' + 
+        '<span class="blue tab3">"startDate"</span>: <span class="orange">"oct-2021"</span>,*' +
+        '<span class="blue tab3">"description"</span>: <span class="orange">"Sustentação e projetos de sistemas de simulação e vendas (TicketShop), </span>*' +
+                                                 '<span class="orange tab10">utilizando .NET Core + Azure DevOps, Oracle e Angular.",</span>*' +
+        '<span class="tab2">},</span>*' + 
+        '<span class="tab2">{*' +
+        '<span class="blue tab3">"roles"</span>: [<span class="orange">"Analista de Sistemas Pl."</span>],*' +
+        '<span class="blue tab3">"company"</span>: <span class="orange">"Indra"</span>,*' + 
+        '<span class="blue tab3">"startDate"</span>: <span class="orange">"jul-2020"</span>,*' +
+        '<span class="blue tab3">"endDate"</span>: <span class="orange">"oct-2021"</span>,*' +
+        '<span class="blue tab3">"description"</span>: <span class="orange">"Sustentação e projetos de sistemas e crawlers para automação da área </span>*' +
+                                                '<span class="orange tab10">de cobranças do Itaú utilizando .NET, .NET Core, SQL Server, Angular e Razor."</span>,*' +
+        '<span class="tab2">},</span>*' + 
+
+        '<span class="tab2">{*' +
+        '<span class="blue tab3">"roles"</span>: [<span class="orange">"Analista de Sistemas Jr."</span>, <span class="orange">"Desenvolvedor Jr."</span>],*' +
+        '<span class="blue tab3">"company"</span>: <span class="orange">"Sinqia"</span>,*' + 
+        '<span class="blue tab3">"startDate"</span>: <span class="orange">"nov-2018"</span>,*' +
+        '<span class="blue tab3">"endDate"</span>: <span class="orange">"jul-2020"</span>,*' +
+        '<span class="blue tab3">"description"</span>: <span class="orange">"Desenvolvimento e sustentação de software bancário e APIs de integração de </span>*' +
+                                                '<span class="orange tab10">operações de renda variável em .NET, desenvolvimento e sustentação de banco de</span>*' +
+                                                '<span class="orange tab10">dados e migração de sistemas legados em VB6."</span>,*' +
+        '<span class="tab2">},</span>*' +    
+
+        '<span class="tab2">{*' +
+        '<span class="blue tab3">"roles"</span>: [<span class="orange">"Desenvolvedor e BI"</span>, <span class="orange">"Estagiário de programação"</span>],*' +
+        '<span class="blue tab3">"company"</span>: <span class="orange">"Moka Info"</span>,*' + 
+        '<span class="blue tab3">"startDate"</span>: <span class="orange">"oct-2017"</span>,*' +
+        '<span class="blue tab3">"endDate"</span>: <span class="orange">"may-2018"</span>,*' +
+        '<span class="blue tab3">"description"</span>: <span class="orange">"Desenvolvimento e sustentação de dashboards (BI) e crawlers de dados em .NET, </span>*' +
+                                                '<span class="orange tab10">alimentação e desenvolvimento de banco de dados em SQL Server, análise de dados </span>*' +
+                                                '<span class="orange tab10">com ferramentas de BI."</span>,*' +
+        '<span class="tab2">}</span>*' + 
+        '<span class="tab">]</spam>*' + 
+        '}',
     ]; 
 
 
-    function typeString(message, period){
+    function typeString(message){
         var TxtType = function(message) {
             this.txt = '';
             this.tick();
@@ -101,46 +149,38 @@
             
             var toHtml = this.txt.replaceAll('*', '<br/>');
 
-            if(toHtml.match(regExOpenTag)){
-                period = 0;
-            }
-            else{           
+            if(!toHtml.match(regExOpenTag))       
                 document.getElementById(spanId).innerHTML = '<span class="wrap">'+ toHtml + '</span>';
-                period = speedType;
-            }
 
             var that = this;
 
             if (this.txt != message)
-                setTimeout(function() {that.tick();}, period);
+                setTimeout(function() {that.tick();}, 0);
             else
                 typing = false;
-
         };
 
         new TxtType(message);
     }
 
-    function replaceString(newString, periodRemove, periodType){
+    function replaceString(newString){
         typing = true;
 
         if(innerHtml === ''){
             typing = false;
-            typeString(newString, periodType)
+            typeString(newString)
         }
         else{
-            innerHtml = innerHtml.substring(0, innerHtml.length - 1);
-            if(innerHtml.match(regExOpenTag)){
-                setTimeout(function() {replaceString(newString, periodRemove, periodType);}, 0);
-            }
-            else{
+            innerHtml = innerHtml.substring(0, innerHtml.length - 4);
+
+            if(!innerHtml.match(regExOpenTag))
                 document.getElementById(spanId).innerHTML = innerHtml;
-                setTimeout(function() {replaceString(newString, periodRemove, periodType);}, periodRemove);
-            }
+                
+            setTimeout(function() {replaceString(newString);}, 0);
         }
     }
 
-    typeString(arrTexts[currArrIndex], speedType);
+    typeString(arrTexts[currArrIndex]);
 
     //Scroll - change texts
     var scrollableElement = document.body;
@@ -154,9 +194,9 @@
         innerHtml = document.getElementById(spanId).innerHTML;
 
         if (checkScrollDirectionIsUp(event) && currArrIndex > 0)
-            replaceString(arrTexts[--currArrIndex], speedDelete, speedType);
+            replaceString(arrTexts[--currArrIndex]);
         else if(!checkScrollDirectionIsUp(event) &&currArrIndex < arrTexts.length -1)
-            replaceString(arrTexts[++currArrIndex], speedDelete, speedType);
+            replaceString(arrTexts[++currArrIndex]);
     }
 
     function checkScrollDirectionIsUp(event) {
