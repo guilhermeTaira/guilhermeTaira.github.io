@@ -56,7 +56,6 @@
 <script>
     let typing = false;
     let currArrIndex = 0;
-    let innerHtml = '';
 
     const spanId = 'span-container';
     const regExOpenTag = /.*<[\w\s="\/]*$(?<!>)$/g;
@@ -138,46 +137,55 @@
 
 
     function typeString(message){
-        var TxtType = function(message) {
-            this.txt = '';
-            this.tick();
+        let TxtType = {
+            typed: '',
+            toType: message,
+            tick(){
+                typing = true;
+
+                this.typed = this.toType.substring(0, this.typed.length + 1);
+
+                var toHtml = this.typed.replaceAll('*', '<br/>');
+
+                if(!toHtml.match(regExOpenTag))       
+                    document.getElementById(spanId).innerHTML = '<span class="wrap">'+ toHtml + '</span>';
+
+                var that = this;
+
+                if (this.typed != message)
+                    setTimeout(function() {that.tick();}, 0);
+                else
+                    typing = false;
+            }
         };
-    
-        TxtType.prototype.tick = function() {
-            typing = true;
-            this.txt = message.substring(0, this.txt.length + 1);
-            
-            var toHtml = this.txt.replaceAll('*', '<br/>');
 
-            if(!toHtml.match(regExOpenTag))       
-                document.getElementById(spanId).innerHTML = '<span class="wrap">'+ toHtml + '</span>';
-
-            var that = this;
-
-            if (this.txt != message)
-                setTimeout(function() {that.tick();}, 0);
-            else
-                typing = false;
-        };
-
-        new TxtType(message);
+        TxtType.tick();
     }
 
     function replaceString(newString){
-        typing = true;
+        const innerHtml = document.getElementById(spanId).innerHTML;
 
-        if(innerHtml === ''){
-            typing = false;
-            typeString(newString)
-        }
-        else{
-            innerHtml = innerHtml.substring(0, innerHtml.length - 4);
+        let TxtDelete = {
+            toDelete: innerHtml,
+            newText: newString,
+            tick(){
+                if (this.toDelete === ''){
+                    typeString(this.newText);
+                }
+                else{
+                    this.toDelete = this.toDelete.substring(0, this.toDelete.length - 4);
 
-            if(!innerHtml.match(regExOpenTag))
-                document.getElementById(spanId).innerHTML = innerHtml;
-                
-            setTimeout(function() {replaceString(newString);}, 0);
+                    if(!this.toDelete.match(regExOpenTag))
+                        document.getElementById(spanId).innerHTML = this.toDelete;
+
+                    var that = this;
+
+                    setTimeout(function() {that.tick();}, 0);
+                } 
+            }
         }
+
+        TxtDelete.tick();
     }
 
     typeString(arrTexts[currArrIndex]);
@@ -191,8 +199,6 @@
         if(typing)
             return;
         
-        innerHtml = document.getElementById(spanId).innerHTML;
-
         if (checkScrollDirectionIsUp(event) && currArrIndex > 0)
             replaceString(arrTexts[--currArrIndex]);
         else if(!checkScrollDirectionIsUp(event) &&currArrIndex < arrTexts.length -1)
